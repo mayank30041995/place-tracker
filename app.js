@@ -4,6 +4,8 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+require('dotenv').config()
+
 
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -26,12 +28,6 @@ app.use((req, res, next) => {
   next();
 });
 
-if(process.env.NODE_ENV === 'production'){
-  app.use(express.static('client/build'))
-  app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-  })
-}
 
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
@@ -54,9 +50,17 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
+
+if(process.env.NODE_ENV === 'production'){
+  app.use(express.static('client/build'))
+  app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+  })
+}
+
 mongoose
   .connect(
-    "mongodb+srv://mayank:mayank@cluster0.hoqgh.mongodb.net/mern?retryWrites=true&w=majority", 
+      process.env.MONGODB_URI, 
     { useNewUrlParser: true, 
       useUnifiedTopology: true
    })

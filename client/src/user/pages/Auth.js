@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { API } from "../../config";
 
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
@@ -70,7 +71,7 @@ const Auth = () => {
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          'http://localhost:5000/api/users/login',
+          `${API}/api/users/login`,
           'POST',
           JSON.stringify({
             email: formState.inputs.email.value,

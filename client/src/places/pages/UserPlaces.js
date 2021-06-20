@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { API } from "../../config";
 
 import PlaceList from '../components/PlaceList';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
@@ -16,7 +17,7 @@ const UserPlaces = () => {
     const fetchPlaces = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/user/${userId}`
+          `${API}/api/places/user/${userId}`
         );
         setLoadedPlaces(responseData.places);
       } catch (err) {}

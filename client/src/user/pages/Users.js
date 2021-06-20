@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API } from "../../config";
 
 import UsersList from '../components/UsersList';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
@@ -13,7 +14,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:5000/api/users'
+          `${API}/api/users`
         );
 
         setLoadedUsers(responseData.users);

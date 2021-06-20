@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { API } from "../../config";
 
 import Card from '../../shared/components/UIElements/Card';
 import Button from '../../shared/components/FormElements/Button';
@@ -32,7 +33,7 @@ const PlaceItem = props => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${props.id}`,
+        `${API}/api/places/${props.id}`,
         'DELETE',
         null,
         {
@@ -84,7 +85,7 @@ const PlaceItem = props => {
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
             <img
-              src={`http://localhost:5000/${props.image}`}
+              src={`${API}/${props.image}`}
               alt={props.title}
             />
           </div>
