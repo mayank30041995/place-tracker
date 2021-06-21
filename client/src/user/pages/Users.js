@@ -14,7 +14,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const responseData = await sendRequest(
-          `${API}/api/users`
+          `https://place-tracker-app.herokuapp.com/api/users`
         );
 
         setLoadedUsers(responseData.users);

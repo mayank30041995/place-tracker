@@ -41,7 +41,7 @@ const UpdatePlace = () => {
     const fetchPlace = async () => {
       try {
         const responseData = await sendRequest(
-          `${API}/api/places/${placeId}`
+          `https://place-tracker-app.herokuapp.com/api/places/${placeId}`
         );
         setLoadedPlace(responseData.place);
         setFormData(
@@ -66,7 +66,7 @@ const UpdatePlace = () => {
     event.preventDefault();
     try {
       await sendRequest(
-        `${API}/api/places/${placeId}`,
+        `https://place-tracker-app.herokuapp.com/api/places/${placeId}`,
         'PATCH',
         JSON.stringify({
           title: formState.inputs.title.value,
