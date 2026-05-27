@@ -22,6 +22,9 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
+          name: Install client dependencies
+          command: npm run install-client
+      - run:
           command: npm run build
       - run:
           name: Create the ~/artifacts directory if it doesn't exist
