@@ -1,41 +1,49 @@
 version: 2.1
 
 jobs:
-  build-and-deploy:
+  build-and-test:
     docker:
       - image: cimg/node:16.20
 
+    resource_class: large
     working_directory: ~/repo
 
     steps:
       - checkout
 
+      # Install backend deps (root)
       - run:
-          name: Install Backend
+          name: Install Backend Dependencies
           command: npm install --legacy-peer-deps
 
+      # Install frontend deps
+      - run:
+          name: Install Frontend Dependencies
+          command: |
+            cd client
+            npm ci || npm install --legacy-peer-deps
+
+      # Build frontend
       - run:
           name: Build Frontend
           command: |
             cd client
-            npm install --legacy-peer-deps
             CI=false npm run build
 
+      # Deploy
       - run:
           name: Deploy to EC2
           command: |
-            echo "$SSH_KEY" > key.pem
-            chmod 600 key.pem
-
-            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
+            ssh -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
               cd ~/place-tracker &&
               git fetch origin &&
               git reset --hard origin/main &&
-              docker compose down --remove-orphans || true &&
+              docker compose down &&
               docker compose up --build -d
             "
 
 workflows:
-  deploy-workflow:
+  version: 2
+  build-workflow:
     jobs:
-      - build-and-deploy
+      - build-and-test
