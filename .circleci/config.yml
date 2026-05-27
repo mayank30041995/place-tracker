@@ -36,10 +36,10 @@ jobs:
           command: |
             ssh -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
               cd ~/place-tracker &&
-              git fetch origin &&
               git reset --hard origin/main &&
-              docker compose down &&
-              docker compose up --build -d
+              git pull origin main &&
+              docker compose down --remove-orphans || true &&
+              docker compose up --build -d --remove-orphans
             "
 
 workflows:
