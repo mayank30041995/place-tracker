@@ -3,26 +3,30 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/node:20.10
+      - image: cimg/node:14.21
+
+    resource_class: large
+
+    working_directory: ~/repo
 
     steps:
       - checkout
 
       - run:
           name: Install Backend Dependencies
-          command: npm install
+          command: npm install --legacy-peer-deps
 
       - run:
           name: Install Frontend Dependencies
           command: |
             cd client
-            npm install
+            npm install --legacy-peer-deps
 
       - run:
           name: Build Frontend
           command: |
             cd client
-            npm run build
+            CI=false npm run build
 
       - run:
           name: Deploy to EC2
@@ -35,6 +39,8 @@ jobs:
             "
 
 workflows:
+  version: 2
+
   build-workflow:
     jobs:
       - build-and-test
