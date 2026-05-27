@@ -68,40 +68,6 @@ const App = () => {
       <Router>
         <MainNavigation />
         <main>{routes}</main>
-        <footer style="background:#111; color:#fff; padding:20px 0; text-align:center; margin-top:40px;">
-          <div style="max-width:1000px; margin:auto; padding:0 20px;">
-            <h3 style="margin:0 0 10px;">Place Tracker App</h3>
-
-            <p style="margin:0 0 15px; font-size:14px; color:#bbb;">
-              Track and manage your favorite places easily.
-            </p>
-
-            <div style="margin-bottom:15px;">
-              <a
-                href="/"
-                style="color:#fff; margin:0 10px; text-decoration:none;"
-              >
-                Home
-              </a>
-              <a
-                href="/about"
-                style="color:#fff; margin:0 10px; text-decoration:none;"
-              >
-                About
-              </a>
-              <a
-                href="/contact"
-                style="color:#fff; margin:0 10px; text-decoration:none;"
-              >
-                Contact
-              </a>
-            </div>
-
-            <div style="font-size:13px; color:#888;">
-              © 2026 Place Tracker. All rights reserved.
-            </div>
-          </div>
-        </footer>
       </Router>
     </AuthContext.Provider>
   );
