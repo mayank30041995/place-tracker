@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
 
-      # Install backend deps (root)
+      # Install backend deps
       - run:
           name: Install Backend Dependencies
           command: npm install --legacy-peer-deps
@@ -30,20 +30,29 @@ jobs:
             cd client
             CI=false npm run build
 
-      # Deploy
+      # Deploy to EC2
       - run:
           name: Deploy to EC2
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
+            echo "$SSH_KEY" > key.pem
+            chmod 600 key.pem
+
+            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$SSH_HOST "
               cd ~/place-tracker &&
               git fetch origin &&
               git reset --hard origin/main &&
-              docker compose down &&
+
+              docker compose down --remove-orphans || true &&
+
+              docker rm -f backend frontend nginx || true &&
+              docker network prune -f || true &&
+
               docker compose up --build -d
             "
 
 workflows:
   version: 2
+
   build-workflow:
     jobs:
       - build-and-test
