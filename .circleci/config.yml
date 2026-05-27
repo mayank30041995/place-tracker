@@ -3,34 +3,38 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/node:14.21
-
-    resource_class: large
-
-    working_directory: ~/repo
+      - image: cimg/node:20.10
 
     steps:
       - checkout
 
       - run:
           name: Install Backend Dependencies
-          command: npm install --legacy-peer-deps
+          command: npm install
 
       - run:
           name: Install Frontend Dependencies
           command: |
             cd client
-            npm install --legacy-peer-deps
+            npm install
 
       - run:
           name: Build Frontend
           command: |
             cd client
-            CI=false npm run build
+            npm run build
+
+      - run:
+          name: Deploy to EC2
+          command: |
+            ssh -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
+              cd ~/place-tracker &&
+              git pull origin main &&
+              docker compose down &&
+              docker compose up --build -d
+            "
 
 workflows:
-  version: 2
-
   build-workflow:
     jobs:
       - build-and-test
