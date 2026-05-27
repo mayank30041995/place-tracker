@@ -28,7 +28,7 @@ jobs:
             echo "$SSH_KEY" > key.pem
             chmod 600 key.pem
 
-            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$63.180.236.1 "
+            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
               set -e
 
               cd ~/place-tracker
