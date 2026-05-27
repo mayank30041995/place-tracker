@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/node:14.21
+      - image: cimg/node:16.20
 
     resource_class: large
 
@@ -14,12 +14,14 @@ jobs:
 
       - run:
           name: Install Backend Dependencies
-          command: npm install --legacy-peer-deps
+          command: |
+            npm install --legacy-peer-deps
 
       - run:
           name: Install Frontend Dependencies
           command: |
             cd client
+            rm -rf node_modules package-lock.json
             npm install --legacy-peer-deps
 
       - run:
