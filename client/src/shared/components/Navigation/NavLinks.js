@@ -12,6 +12,10 @@ const NavLinks = (props) => {
         <NavLink to="/" exact>
           ALL USERS---
         </NavLink>
+
+        <NavLink to="/places" exact>
+          PLACES- Place Tracker CI/CD Test
+        </NavLink>
       </li>
       {auth.isLoggedIn && (
         <li>
