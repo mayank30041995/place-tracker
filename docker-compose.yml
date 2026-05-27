@@ -2,7 +2,6 @@ services:
   backend:
     build:
       context: .
-    container_name: backend
     ports:
       - "5000:5000"
     restart: always
@@ -12,14 +11,12 @@ services:
   frontend:
     build:
       context: ./client
-    container_name: frontend
     restart: always
     depends_on:
       - backend
 
   nginx:
     image: nginx:alpine
-    container_name: nginx
     ports:
       - "80:80"
     restart: always
