@@ -27,10 +27,7 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            echo "$SSH_KEY" > key.pem
-            chmod 600 key.pem
-
-            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$SSH_HOST "
+            ssh -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
               cd ~/place-tracker &&
               git fetch origin &&
               git reset --hard origin/main &&
