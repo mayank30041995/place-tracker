@@ -10,29 +10,50 @@ jobs:
     steps:
       - checkout
 
-      # Backend install
       - run:
-          name: Install Backend
+          name: Install Backend Dependencies
           command: npm install --legacy-peer-deps
 
-      # Frontend install + build
       - run:
-          name: Build Frontend
+          name: Install + Build Frontend
           command: |
             cd client
             npm install --legacy-peer-deps
             CI=false npm run build
+            cd ..
 
-      # Deploy
       - run:
           name: Deploy to EC2
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
-              cd ~/place-tracker &&
-              git fetch origin &&
-              git reset --hard origin/main &&
-              docker compose down --remove-orphans || true &&
-              docker compose up --build -d
+            echo "$SSH_KEY" > key.pem
+            chmod 600 key.pem
+
+            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@$SSH_HOST "
+              set -e
+
+              cd ~/place-tracker
+
+              echo 'Pull latest code'
+              git fetch origin
+              git reset --hard origin/main
+
+              echo 'Stopping containers'
+              docker compose down --remove-orphans || true
+
+              echo 'Removing old containers'
+              docker rm -f backend frontend nginx || true
+
+              echo 'Removing old images'
+              docker rmi place-tracker-backend place-tracker-frontend || true
+
+              echo 'Cleaning system'
+              docker system prune -af || true
+
+              echo 'Rebuilding fresh'
+              docker compose build --no-cache
+
+              echo 'Starting containers'
+              docker compose up -d
             "
 
 workflows:

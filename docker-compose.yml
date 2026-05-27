@@ -1,27 +1,24 @@
 services:
   backend:
-    build:
-      context: .
+    build: ./backend
+    container_name: backend
     ports:
       - "5000:5000"
     restart: always
-    env_file:
-      - .env
 
   frontend:
-    build:
-      context: ./client
+    build: ./client
+    container_name: frontend
+    ports:
+      - "3000:80"
     restart: always
-    depends_on:
-      - backend
 
   nginx:
     image: nginx:alpine
+    container_name: nginx
     ports:
-      - "80:80"
-    restart: always
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - "80:80"d 
     depends_on:
       - frontend
       - backend
+    restart: always
