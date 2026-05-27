@@ -12,9 +12,6 @@ const NavLinks = (props) => {
         <NavLink to="/" exact>
           ALL USERS
         </NavLink>
-        <NavLink to="/" exact>
-          CI CD Approach
-        </NavLink>
       </li>
       {auth.isLoggedIn && (
         <li>
