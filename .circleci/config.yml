@@ -1,63 +1,60 @@
 version: 2.1
 
 jobs:
-  build-and-deploy:
+  deploy:
     docker:
-      - image: cimg/node:16.20
+      - image: cimg/node:18.17
 
     working_directory: ~/repo
 
     steps:
       - checkout
 
+      # Optional frontend build check (safe CI validation)
       - run:
-          name: Install Backend Dependencies
-          command: npm install --legacy-peer-deps
-
-      - run:
-          name: Install + Build Frontend
+          name: Install & Build Frontend (CI check)
           command: |
             cd client
             npm install --legacy-peer-deps
             CI=false npm run build
-            cd ..
 
+      # Deploy to EC2 (REAL FIXED PART)
       - run:
           name: Deploy to EC2
           command: |
             echo "$SSH_KEY" > key.pem
             chmod 600 key.pem
 
-            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@63.180.236.1 "
+            ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@63.180.236.1 << 'EOF'
+
               set -e
 
               cd ~/place-tracker
 
-              echo 'Pull latest code'
+              echo "➡ Pull latest code"
               git fetch origin
               git reset --hard origin/main
 
-              echo 'Stopping containers'
+              echo "➡ Stop old stack safely"
               docker compose down --remove-orphans || true
 
-              echo 'Removing old containers'
+              echo "➡ Remove stuck containers (IMPORTANT FIX)"
               docker rm -f backend frontend nginx || true
 
-              echo 'Removing old images'
-              docker rmi place-tracker-backend place-tracker-frontend || true
+              echo "➡ Remove old network (fixes 'already exists')"
+              docker network prune -f || true
 
-              echo 'Cleaning system'
-              docker system prune -af || true
+              echo "➡ Rebuild clean images (FIX FOR 'image already exists')"
+              docker compose build --no-cache --pull
 
-              echo 'Rebuilding fresh'
-              docker compose build --no-cache
+              echo "➡ Start fresh deployment"
+              docker compose up -d --force-recreate --remove-orphans
 
-              echo 'Starting containers'
-              docker compose up -d
-            "
+              echo "✅ Deployment complete"
+
+            EOF
 
 workflows:
-  version: 2
-  deploy:
+  deploy-workflow:
     jobs:
-      - build-and-deploy
+      - deploy
