@@ -1,17 +1,21 @@
+version: "3.8"
+
 services:
   backend:
-    build: .
+    build:
+      context: .
     container_name: backend
     ports:
       - "5000:5000"
     env_file:
-      - ./.env
+      - .env
 
   frontend:
-    build: ./client
+    build:
+      context: ./client
     container_name: frontend
-    ports:
-      - "3000:80"
+    depends_on:
+      - backend
 
   nginx:
     image: nginx:alpine
